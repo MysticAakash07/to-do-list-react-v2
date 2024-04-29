@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import './App.css';
+import { MdOutlineDelete } from "react-icons/md";
+import { IoMdCheckmark } from "react-icons/io";
 function App() {
   const [isCompleteScreen,setIsCompleted] = useState(false);
   return (
@@ -35,9 +37,21 @@ function App() {
 
         {/* To Do list items */}
         <div className='todo-list'>
-          <div>
+          <div className='todo-list-item'>
             <h3>Task 1</h3>
             <p>Description</p>
+            <div>
+            <MdOutlineDelete 
+              className='icon' 
+              // onClick={() => handleDeleteTodo (index) }
+              title="Delete?"
+            />
+            <IoMdCheckmark
+              className='check-icon icon' 
+              // onClick={() => handleComplete (index)}
+              title="Complete?"
+            />
+            </div>
           </div>
         </div>
       </div>
