@@ -7,6 +7,7 @@ function App() {
   const [allTodos,setTodos] = useState([]);
   const [newTitle,setNewTitle] = useState("");
   const [newDescription,setNewDescription] = useState("");
+  const [completedTodos,setCompletedTodos] = useState([]);
 
   const handleAddTodo = () =>{
     let newTodoItem = {
@@ -20,6 +21,34 @@ function App() {
     localStorage.setItem('todolist', JSON.stringify(updatedTodoArr));
   }
 
+  const handleDeleteTodo = (index)=>{
+    let reducedTodo = [...allTodos];
+    reducedTodo.splice(index,1);
+    localStorage.setItem('todolist',JSON.stringify(reducedTodo));
+    setTodos(reducedTodo);
+  }
+
+  const handleComplete = (index)=>{
+    let now = new Date();
+    let dd = now.getDate();
+    let mm = now.getMonth();
+    let yyyy = now.getFullYear();
+    let h = now.getHours();
+    let m = now.getMinutes();
+    let s = now.getSeconds();
+
+    let completedOn = dd + '/' + mm + '/' + yyyy + ' at ' + h + ':' + m + ':' + s;
+
+    let filteredItem = {
+      ...allTodos[index],
+      completedOn:completedOn
+    }
+
+    let updatedCompleteArr = [...completedTodos];
+    updatedCompleteArr.push(filteredItem);
+    setCompletedTodos(updatedCompleteArr);
+    handleDeleteTodo(index);
+  }
   useEffect(()=>{
     let savedTodo = JSON.parse(localStorage.getItem('todolist'));
     if(savedTodo){
@@ -53,14 +82,18 @@ function App() {
 
         {/* Button For ToDo and Completed */}
         <div className='btn-area'>
-          <button  className={`secondaryBtn ${isCompleteScreen === false && 'active'}`} onClick={()=>setIsCompleted(false)}>ToDo</button>
-          <button className={`secondaryBtn ${isCompleteScreen === true && 'active'}`} onClick={()=>setIsCompleted(true)}>Completed</button>
+          <button  className={`secondaryBtn ${isCompleteScreen === false && 'active'}`} 
+            onClick={()=>setIsCompleted(false)}>ToDo
+          </button>
+          <button className={`secondaryBtn ${isCompleteScreen === true && 'active'}`} 
+            onClick={()=>setIsCompleted(true)}>Completed
+          </button>
         </div>
 
         {/* To Do list items */}
         <div className='todo-list'>
           
-            {allTodos.map((item,index) => {
+            {isCompleteScreen===false && allTodos.map((item,index) => {
               return(
                 <div className='todo-list-item' key={index}>
                   <div>
@@ -70,13 +103,32 @@ function App() {
                   <div>
                   <MdOutlineDelete 
                     className='icon' 
-                    // onClick={() => handleDeleteTodo (index) }
+                    onClick={() => handleDeleteTodo (index) }
                     title="Delete?"
                   />
                   <IoMdCheckmark
                     className='check-icon icon' 
-                    // onClick={() => handleComplete (index)}
+                    onClick={() => handleComplete (index)}
                     title="Complete?"
+                  />
+                  </div>
+                </div>
+              );
+            })}
+
+            {isCompleteScreen===true && completedTodos.map((item,index) => {
+              return(
+                <div className='todo-list-item' key={index}>
+                  <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                  <p><small>Completed On : {item.completedOn}</small></p>
+                  </div>
+                  <div>
+                  <MdOutlineDelete 
+                    className='icon' 
+                    onClick={() => handleDeleteTodo (index) }
+                    title="Delete?"
                   />
                   </div>
                 </div>
