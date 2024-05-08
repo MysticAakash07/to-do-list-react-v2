@@ -48,11 +48,25 @@ function App() {
     updatedCompleteArr.push(filteredItem);
     setCompletedTodos(updatedCompleteArr);
     handleDeleteTodo(index);
+    localStorage.setItem('completedTodos', JSON.stringify(updatedCompleteArr));
   }
+
+  const handleDeleteCompletedTodo = (index) => {
+    let reducedCompletedTodo = [...completedTodos];
+    reducedCompletedTodo.splice(index,1);
+    localStorage.setItem('completedTodos',JSON.stringify(reducedCompletedTodo));
+    setCompletedTodos(reducedCompletedTodo);
+  }
+
+  // To Load the Existing data about the todo list from memory
   useEffect(()=>{
     let savedTodo = JSON.parse(localStorage.getItem('todolist'));
+    let savedCompletedTodo = JSON.parse(localStorage.getItem('completedTodos'));
     if(savedTodo){
       setTodos(savedTodo);
+    }
+    if(savedCompletedTodo){
+      setCompletedTodos(savedCompletedTodo);
     }
   })
   return (
@@ -92,7 +106,7 @@ function App() {
 
         {/* To Do list items */}
         <div className='todo-list'>
-          
+          {/* For the Todo Tab */}
             {isCompleteScreen===false && allTodos.map((item,index) => {
               return(
                 <div className='todo-list-item' key={index}>
@@ -115,7 +129,7 @@ function App() {
                 </div>
               );
             })}
-
+          {/* For the Completed Screen */}
             {isCompleteScreen===true && completedTodos.map((item,index) => {
               return(
                 <div className='todo-list-item' key={index}>
@@ -127,7 +141,7 @@ function App() {
                   <div>
                   <MdOutlineDelete 
                     className='icon' 
-                    onClick={() => handleDeleteTodo (index) }
+                    onClick={() => handleDeleteCompletedTodo (index) }
                     title="Delete?"
                   />
                   </div>
